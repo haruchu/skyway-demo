@@ -1,6 +1,6 @@
 import { nowInSec, SkyWayAuthToken, SkyWayContext, SkyWayRoom, SkyWayStreamFactory, uuidV4 } from '@skyway-sdk/room';
 
-const initVideoFunc = async () => {
+const initVideoFunc = async (roomId) => {
   const token = new SkyWayAuthToken({
     jti: uuidV4(),
     iat: nowInSec(),
@@ -47,7 +47,6 @@ const initVideoFunc = async () => {
   (async () => {
     const localVideo = document.getElementById("local-video");
     const remoteMediaArea = document.getElementById("remote-media-area");
-    const roomNameInput = document.getElementById("room-name");
 
     const myId = document.getElementById("my-id");
     const joinButton = document.getElementById("join");
@@ -57,8 +56,7 @@ const initVideoFunc = async () => {
     video.attach(localVideo);
     await localVideo.play();
 
-    joinButton.onclick = async () => {
-      if (roomNameInput.value === "") return;
+      if (roomId === "") return;
       const leaveButton = document.getElementById("leave");
       leaveButton.onclick = async () => {
         await me.leave();
@@ -70,7 +68,7 @@ const initVideoFunc = async () => {
       const context = await SkyWayContext.Create(token);
       const room = await SkyWayRoom.FindOrCreate(context, {
         type: "p2p",
-        name: roomNameInput.value,
+        name: roomId,
       });
       const me = await room.join();
       console.log(room);
@@ -109,7 +107,6 @@ const initVideoFunc = async () => {
 
       room.publications.forEach(subscribeAndAttach);
       room.onStreamPublished.add((e) => subscribeAndAttach(e.publication));
-    };
   })();
 };
 
