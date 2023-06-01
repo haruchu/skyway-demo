@@ -49,7 +49,6 @@ const initVideoFunc = async (roomId) => {
     const remoteMediaArea = document.getElementById("remote-media-area");
 
     const myId = document.getElementById("my-id");
-    const joinButton = document.getElementById("join");
 
     const { audio, video } =
       await SkyWayStreamFactory.createMicrophoneAudioAndCameraStream();

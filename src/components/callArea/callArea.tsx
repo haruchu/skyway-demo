@@ -9,7 +9,7 @@ const CallArea = () => {
 
   useEffect(() => {
     initVideoFunc(searchParams.get("roomId"));
-  }, []);
+  }, [searchParams]);
 
   return (
     <>
