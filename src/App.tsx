@@ -1,11 +1,17 @@
 import "./App.css";
-import CallArea from "./components/callArea";
+import { Routes, Route } from "react-router-dom"; // 追加
+import RoomLists from "./components/roomLists/roomLists";
+import CallArea from "./components/callArea/callArea";
+
 
 function App() {
   return (
     <div className="App">
-      <CallArea />
-    </div>
+      <Routes>
+        <Route path="/" element={ <RoomLists /> } /> 
+        <Route path="/room" element={ <CallArea /> } /> 
+      </Routes>   
+       </div>
   );
 }
 

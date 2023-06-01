@@ -1,10 +1,14 @@
 "use client";
 import { useEffect } from "react";
-import { initVideoFunc } from "../func/main";
+import { initVideoFunc } from "../../func/main";
+import { useSearchParams } from "react-router-dom";
+
 
 const CallArea = () => {
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
-    initVideoFunc();
+    initVideoFunc(searchParams.get("roomId"));
   }, []);
 
   return (
@@ -13,9 +17,10 @@ const CallArea = () => {
         ID: <span id="my-id"></span>
       </p>
       <div>
-        room name: <input id="room-name" type="text" />
-        <button id="join">join</button>
-        <button id="leave">leave</button>
+        <div>
+          room Id: {searchParams.get("roomId")}
+        </div>
+        <a id="leave" href="/">leave</a>
       </div>
       <video id="local-video" width="400px" muted playsInline></video>
       <div id="button-area"></div>
