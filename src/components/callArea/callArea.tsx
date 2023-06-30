@@ -10,7 +10,7 @@ const CallArea = () => {
 
   useEffect(() => {
     initVideoFunc(searchParams.get("roomId"));
-  }, []);
+  }, [searchParams]);
 
   const onShare = async () => {
     const mediaStreamConstraints = {
