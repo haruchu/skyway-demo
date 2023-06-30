@@ -6,7 +6,7 @@ import { ShareVideo, Wrapper } from "./style";
 
 const CallArea = () => {
   const [searchParams] = useSearchParams();
-  const [isSharing, setIsSharring] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   useEffect(() => {
     initVideoFunc(searchParams.get("roomId"));
@@ -18,9 +18,9 @@ const CallArea = () => {
     };
 
     const shareVideo = document.getElementById(
-      "shareVideo"
+      "share-video"
     ) as HTMLVideoElement;
-    setIsSharring(true);
+    setIsSharing(true);
 
     function gotLocalMediaStream(mediaStream: MediaProvider) {
       // const localStream = mediaStream;
@@ -34,17 +34,17 @@ const CallArea = () => {
     gotLocalMediaStream(localVideoStream);
     localVideoStream.getTracks()[0].addEventListener("ended", () => {
       // ここで処理を記述
-      setIsSharring(false);
+      setIsSharing(false);
     });
   };
 
   return (
     <>
-      <Wrapper>
+      <Wrapper isSharing={isSharing}>
         <p>
           ID: <span id="my-id"></span>
         </p>
-        <div id="wrapper">
+        <div>
           <div>room Id: {searchParams.get("roomId")}</div>
           <a id="leave" href="/">
             leave
@@ -58,7 +58,7 @@ const CallArea = () => {
         <div id="remote-media-area"></div>
       </Wrapper>
       <ShareVideo
-        id="shareVideo"
+        id="share-video"
         autoPlay
         muted
         playsInline

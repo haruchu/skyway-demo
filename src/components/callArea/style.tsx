@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ isSharing: boolean }>`
+  display: ${({ isSharing }) => (isSharing ? "none" : "block")};
   position: relative;
   height: 100vh;
 `;
