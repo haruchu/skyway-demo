@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { initVideoFunc, onShare } from "../../func/main";
+import { initVideoFunc, onShare } from "../../func/main2";
 import { useSearchParams } from "react-router-dom";
 import { Wrapper } from "./style";
 
@@ -8,8 +8,8 @@ const CallArea = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    initVideoFunc(searchParams.get("roomId"));
-    onShare(searchParams.get("roomId"));
+    initVideoFunc(searchParams.get("roomId") ?? "");
+    onShare(searchParams.get("roomId") ?? "");
   }, [searchParams]);
 
   return (
