@@ -1,11 +1,12 @@
 "use client";
 import { useEffect } from "react";
 import { initVideoFunc, onShare } from "../../func/main2";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Wrapper } from "./style";
 
 const CallArea = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     initVideoFunc(searchParams.get("roomId") ?? "");
@@ -20,10 +21,10 @@ const CallArea = () => {
         </p>
         <div>
           <div>room Id: {searchParams.get("roomId")}</div>
-          <a id="leave" href="/">
-            leave
-          </a>
-          <button id="share">share</button>
+          <button id="leave" onClick={() => navigate("/")}>
+            退出
+          </button>
+          <button id="share">共有</button>
         </div>
         <video id="local-video" width="400px" muted playsInline></video>
         <div id="button-area"></div>
