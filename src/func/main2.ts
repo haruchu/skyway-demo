@@ -90,7 +90,6 @@ const initVideoFunc = async (roomId: string) => {
     const member = await room.join();
     myId.textContent = member.id;
 
-
     const userVideo: { [index: string]: HTMLVideoElement } = {};
 
     member.onPublicationSubscribed.add(async ({ stream, subscription }) => {
@@ -101,10 +100,7 @@ const initVideoFunc = async (roomId: string) => {
         const newVideo = document.createElement("video");
         newVideo.playsInline = true;
         newVideo.autoplay = true;
-        newVideo.setAttribute(
-          "data-member-id",
-          subscription.publication.publisher.id
-        );
+        newVideo.id = subscription.publication.publisher.id;
 
         remoteVideos.append(newVideo);
         userVideo[publisherId] = newVideo;
@@ -112,8 +108,9 @@ const initVideoFunc = async (roomId: string) => {
       const newVideo = userVideo[publisherId];
       stream.attach(newVideo);
 
-      if (subscription.contentType === "video" && room.type === "sfu") {
+      if (subscription.contentType === "video" && room.type === "p2p") {
         newVideo.onclick = () => {
+          console.log(subscription.preferredEncoding);
           if (subscription.preferredEncoding === "low") {
             subscription.changePreferredEncoding("high");
           } else {
@@ -130,7 +127,7 @@ const initVideoFunc = async (roomId: string) => {
     room.publications.forEach(subscribe);
 
     await member.publish(audio);
-    if (room.type === "sfu") {
+    if (room.type === "p2p") {
       await member.publish(video, {
         encodings: [
           { maxBitrate: 10_000, id: "low" },
@@ -149,9 +146,8 @@ const initVideoFunc = async (roomId: string) => {
 
     room.onMemberLeft.add((e) => {
       if (e.member.id === member.id) return;
-
-      const remoteVideo = remoteVideos.querySelector(
-        `[data-member-id="${e.member.id}"]`
+      const remoteVideo = document.getElementById(
+        e.member.id
       ) as HTMLVideoElement;
       disposeVideoElement(remoteVideo);
     });
@@ -161,7 +157,6 @@ const initVideoFunc = async (roomId: string) => {
         disposeVideoElement(element as HTMLVideoElement);
       });
       room.dispose();
-      //   room = undefined;
     });
 
     leaveButton.addEventListener("click", () => member.leave(), {
@@ -171,28 +166,34 @@ const initVideoFunc = async (roomId: string) => {
 };
 
 const onShare = (roomId: string) => {
-    (async () => {
-      const context = await SkyWayContext.Create(token);
-      const room = await SkyWayRoom.FindOrCreate(context, {
-        type: "p2p",
-        name: roomId,
+  (async () => {
+    const remoteVideos = document.getElementById(
+      "remote-media-area"
+    ) as HTMLVideoElement;
+    const context = await SkyWayContext.Create(token);
+    const room = await SkyWayRoom.FindOrCreate(context, {
+      type: "p2p",
+      name: roomId,
+    });
+    const share = await room.join();
+    const shareButton = document.getElementById("share") as HTMLButtonElement;
+    shareButton.onclick = async () => {
+      const displayStream = await navigator.mediaDevices.getDisplayMedia();
+      const [displayTrack] = displayStream.getVideoTracks();
+      const stream = new LocalVideoStream(displayTrack, {
+        // height: 100,
+        stopTrackWhenDisabled: true,
       });
-      const share = await room.join();
-      const shareButton = document.getElementById("share") as HTMLButtonElement;
-      shareButton.onclick = async () => {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia();
-        const [displayTrack] = displayStream.getVideoTracks();
-        const stream = new LocalVideoStream(displayTrack, {
-          height: 100,
-          stopTrackWhenDisabled: true,
-        });
-        await share.publish(stream);
-  
-        displayStream.getTracks()[0].addEventListener("ended", async () => {
-          share.leave();
-        });
-      };
-    })();
-  };
+      await share.publish(stream);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const remoteVideo = document.getElementById(share.id) as HTMLVideoElement;
+      remoteVideo.classList.add("share-video");
+
+      displayStream.getTracks()[0].addEventListener("ended", async () => {
+        share.leave();
+      });
+    };
+  })();
+};
 
 export { initVideoFunc, onShare };
