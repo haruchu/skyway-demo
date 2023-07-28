@@ -15,26 +15,29 @@ export const VideoContent = styled.div`
   justify-content: center;
   gap: 10px;
 `;
-export const StyledVideo = styled.video<{ isLarge?: boolean }>`
+export const StyledVideo = styled.video`
   height: 300px;
   width: 400px;
-  cursor: pointer;
   object-fit: cover;
   border-radius: 12px;
+`;
+
+export const RemoteVideo = styled(StyledVideo)<{ isLarge?: boolean }>`
+  cursor: pointer;
 
   ${({ isLarge }) =>
     isLarge
       ? `
-        position: absolute;
-        top:0;
-        left:0;
-        z-index: 10;
-        height: 100%;
-        width: 100%;
-        outline: none;
-  `
+      position: absolute;
+      top:0;
+      left:0;
+      z-index: 10;
+      height: 100%;
+      width: 100%;
+      outline: none;
+`
       : `
-        position: static;
-        z-index: 1;
-  `}
+      position: static;
+      z-index: 1;
+`}
 `;

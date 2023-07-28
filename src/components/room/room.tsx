@@ -11,7 +11,7 @@ import { FC, useEffect, useRef, useState } from "react";
 
 import { contextOptions, tokenString } from "./const";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { StyledVideo, VideoContent, Wrapper } from "./style";
+import { RemoteVideo, StyledVideo, VideoContent, Wrapper } from "./style";
 
 const Room = () => {
   const navigate = useNavigate();
@@ -156,7 +156,7 @@ const Video: FC<{ subscription: RoomSubscription<RemoteVideoStream> }> = ({
   }, [ref.current]);
 
   return (
-    <StyledVideo
+    <RemoteVideo
       muted
       autoPlay
       playsInline
