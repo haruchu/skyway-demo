@@ -1,69 +1,35 @@
 "use client";
-import { useEffect, useState } from "react";
-import { initVideoFunc } from "../../func/main";
-import { useSearchParams } from "react-router-dom";
-import { ShareVideo, Wrapper } from "./style";
+import { useEffect } from "react";
+import { initVideoFunc, onShare } from "../../func/main2";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Wrapper } from "./style";
 
 const CallArea = () => {
   const [searchParams] = useSearchParams();
-  const [isSharing, setIsSharing] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    initVideoFunc(searchParams.get("roomId"));
+    initVideoFunc(searchParams.get("roomId") ?? "");
+    onShare(searchParams.get("roomId") ?? "");
   }, [searchParams]);
-
-  const onShare = async () => {
-    const mediaStreamConstraints = {
-      video: true,
-    };
-
-    const shareVideo = document.getElementById(
-      "share-video"
-    ) as HTMLVideoElement;
-    setIsSharing(true);
-
-    function gotLocalMediaStream(mediaStream: MediaProvider) {
-      // const localStream = mediaStream;
-      if (shareVideo === null) return;
-      shareVideo.srcObject = mediaStream;
-    }
-
-    const localVideoStream = await navigator.mediaDevices.getDisplayMedia(
-      mediaStreamConstraints
-    );
-    gotLocalMediaStream(localVideoStream);
-    localVideoStream.getTracks()[0].addEventListener("ended", () => {
-      // ここで処理を記述
-      setIsSharing(false);
-    });
-  };
 
   return (
     <>
-      <Wrapper isSharing={isSharing}>
+      <Wrapper id="member">
         <p>
           ID: <span id="my-id"></span>
         </p>
         <div>
           <div>room Id: {searchParams.get("roomId")}</div>
-          <a id="leave" href="/">
-            leave
-          </a>
-          <button id="share" onClick={onShare}>
-            share
+          <button id="leave" onClick={() => navigate("/")}>
+            退出
           </button>
+          <button id="share">共有</button>
         </div>
         <video id="local-video" width="400px" muted playsInline></video>
         <div id="button-area"></div>
         <div id="remote-media-area"></div>
       </Wrapper>
-      <ShareVideo
-        id="share-video"
-        autoPlay
-        muted
-        playsInline
-        isSharing={isSharing}
-      ></ShareVideo>
     </>
   );
 };
