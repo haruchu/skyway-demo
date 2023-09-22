@@ -42,12 +42,7 @@ const Room = () => {
     }
 
     await member.publish(audio);
-    await member.publish(video, {
-      encodings: [
-        { id: "low", maxBitrate: 10_000 },
-        { id: "high", maxBitrate: 800_000 },
-      ],
-    });
+    await member.publish(video);
 
     member.onPublicationSubscribed.add((e) => {
       if (e.stream.contentType === "audio") {
