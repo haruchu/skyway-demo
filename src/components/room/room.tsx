@@ -1,12 +1,5 @@
-import {
-  LocalVideoStream,
-  RemoteVideoStream,
-  RoomSubscription,
-  SkyWayContext,
-  SkyWayRoom,
-} from "@skyway-sdk/room";
+import { RemoteVideoStream, RoomSubscription } from "@skyway-sdk/room";
 import { FC, useEffect, useRef, useState } from "react";
-import { tokenString } from "./const";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { RemoteVideo, StyledVideo, VideoContent, Wrapper } from "./style";
 import { init, onShare } from "./func";
