@@ -5,6 +5,7 @@ import {
   SkyWayRoom,
   SkyWayStreamFactory,
   RoomPublication,
+  LocalVideoStream,
 } from "@skyway-sdk/room";
 import { tokenString, contextOptions } from "./const";
 
@@ -72,4 +73,26 @@ export const init = async (
   });
 
   await Promise.all(room.publications.map(subscribe));
+};
+
+export const onShare = (roomId: string) => {
+  (async () => {
+    const context = await SkyWayContext.Create(tokenString);
+    const room = await SkyWayRoom.FindOrCreate(context, {
+      type: "p2p",
+      name: roomId,
+    });
+    const share = await room.join();
+    const shareButton = document.getElementById("share") as HTMLButtonElement;
+    shareButton.onclick = async () => {
+      const displayStream = await navigator.mediaDevices.getDisplayMedia();
+      const [displayTrack] = displayStream.getVideoTracks();
+      const stream = new LocalVideoStream(displayTrack);
+      await share.publish(stream);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      displayStream.getTracks()[0].addEventListener("ended", async () => {
+        share.leave();
+      });
+    };
+  })();
 };

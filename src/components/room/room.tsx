@@ -9,7 +9,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { tokenString } from "./const";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { RemoteVideo, StyledVideo, VideoContent, Wrapper } from "./style";
-import { init } from "./func";
+import { init, onShare } from "./func";
 
 const Room = () => {
   const navigate = useNavigate();
@@ -20,28 +20,6 @@ const Room = () => {
   >([]);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
-
-  const onShare = (roomId: string) => {
-    (async () => {
-      const context = await SkyWayContext.Create(tokenString);
-      const room = await SkyWayRoom.FindOrCreate(context, {
-        type: "p2p",
-        name: roomId,
-      });
-      const share = await room.join();
-      const shareButton = document.getElementById("share") as HTMLButtonElement;
-      shareButton.onclick = async () => {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia();
-        const [displayTrack] = displayStream.getVideoTracks();
-        const stream = new LocalVideoStream(displayTrack);
-        await share.publish(stream);
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        displayStream.getTracks()[0].addEventListener("ended", async () => {
-          share.leave();
-        });
-      };
-    })();
-  };
 
   useEffect(() => {
     init(roomId, localVideoRef, audioContainerRef, setVideoSubscriptions);
