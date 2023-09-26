@@ -1,7 +1,7 @@
 import { RemoteVideoStream, RoomSubscription } from "@skyway-sdk/room";
 import { FC, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { RemoteVideo, StyledVideo, VideoContent, Wrapper } from "./style";
+import { LocalVideo, RemoteVideo, VideoContent, Wrapper } from "./style";
 import { init, onShare } from "./func";
 
 const Room = () => {
@@ -30,7 +30,7 @@ const Room = () => {
         </button>
       </div>
       <VideoContent>
-        <StyledVideo ref={localVideoRef}></StyledVideo>
+        <LocalVideo ref={localVideoRef} />
         {videoSubscriptions.map((subscription) => (
           <Video key={subscription.id} subscription={subscription} />
         ))}
