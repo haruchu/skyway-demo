@@ -23,7 +23,7 @@ const Room = () => {
       audioContainerRef,
       videoToggleRef,
       setVideoSubscriptions,
-      () => setIsVideoEnabled(!isVideoEnabled)
+      (value: boolean) => setIsVideoEnabled(value)
     );
   }, []);
 

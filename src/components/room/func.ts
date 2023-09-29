@@ -17,7 +17,7 @@ export const init = async (
   setVideoSubscriptions: React.Dispatch<
     React.SetStateAction<RoomSubscription<RemoteVideoStream>[]>
   >,
-  onToggleVideo: () => void
+  onToggleVideo: (value: boolean) => void
 ) => {
   const context = await SkyWayContext.Create(tokenString, contextOptions);
   const room = await SkyWayRoom.FindOrCreate(context, {
@@ -67,10 +67,11 @@ export const init = async (
       const videoToggleButton = async () => {
         if (publication.state === "enabled") {
           await publication.disable();
+          onToggleVideo(false);
         } else {
           await publication.enable();
+          onToggleVideo(true);
         }
-        onToggleVideo();
       };
       videoToggleRef &&
         videoToggleRef.current?.addEventListener("click", () =>

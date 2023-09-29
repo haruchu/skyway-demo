@@ -20,12 +20,14 @@ export const LocalVideo = styled.video`
   width: 20%;
   object-fit: cover;
   border-radius: 12px;
+  background-color: black;
 `;
 
 export const RemoteVideo = styled.video<{ isLarge?: boolean }>`
   cursor: pointer;
   object-fit: cover;
   border-radius: 12px;
+  background-color: black;
 
   ${({ isLarge }) =>
     isLarge
