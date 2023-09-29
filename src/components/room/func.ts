@@ -13,9 +13,11 @@ export const init = async (
   roomId: string,
   localVideoRef: React.RefObject<HTMLVideoElement>,
   audioContainerRef: React.RefObject<HTMLDivElement>,
+  videoToggleRef: React.RefObject<HTMLButtonElement>,
   setVideoSubscriptions: React.Dispatch<
     React.SetStateAction<RoomSubscription<RemoteVideoStream>[]>
-  >
+  >,
+  onToggleVideo: () => void
 ) => {
   const context = await SkyWayContext.Create(tokenString, contextOptions);
   const room = await SkyWayRoom.FindOrCreate(context, {
@@ -61,6 +63,19 @@ export const init = async (
   const subscribe = async (publication: RoomPublication) => {
     if (publication.publisher.id !== me.id) {
       await me.subscribe(publication);
+    } else {
+      const videoToggleButton = async () => {
+        if (publication.state === "enabled") {
+          await publication.disable();
+        } else {
+          await publication.enable();
+        }
+        onToggleVideo();
+      };
+      videoToggleRef &&
+        videoToggleRef.current?.addEventListener("click", () =>
+          videoToggleButton()
+        );
     }
   };
   room.onStreamPublished.add(async (e) => {

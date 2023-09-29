@@ -8,14 +8,23 @@ const Room = () => {
   const navigate = useNavigate();
   const audioContainerRef = useRef<HTMLDivElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const videoToggleRef = useRef<HTMLButtonElement>(null);
   const [videoSubscriptions, setVideoSubscriptions] = useState<
     RoomSubscription<RemoteVideoStream>[]
   >([]);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
 
   useEffect(() => {
-    init(roomId, localVideoRef, audioContainerRef, setVideoSubscriptions);
+    init(
+      roomId,
+      localVideoRef,
+      audioContainerRef,
+      videoToggleRef,
+      setVideoSubscriptions,
+      () => setIsVideoEnabled(!isVideoEnabled)
+    );
   }, []);
 
   return (
@@ -27,6 +36,9 @@ const Room = () => {
         </button>
         <button id="share" onClick={() => onShare(roomId)}>
           共有
+        </button>
+        <button ref={videoToggleRef}>
+          {isVideoEnabled ? "画面オフ" : "画面オン"}
         </button>
       </div>
       <VideoContent>
