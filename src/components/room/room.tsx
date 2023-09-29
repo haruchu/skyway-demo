@@ -1,21 +1,30 @@
 import { RemoteVideoStream, RoomSubscription } from "@skyway-sdk/room";
 import { FC, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { RemoteVideo, StyledVideo, VideoContent, Wrapper } from "./style";
+import { LocalVideo, RemoteVideo, VideoContent, Wrapper } from "./style";
 import { init, onShare } from "./func";
 
 const Room = () => {
   const navigate = useNavigate();
   const audioContainerRef = useRef<HTMLDivElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const videoToggleRef = useRef<HTMLButtonElement>(null);
   const [videoSubscriptions, setVideoSubscriptions] = useState<
     RoomSubscription<RemoteVideoStream>[]
   >([]);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
 
   useEffect(() => {
-    init(roomId, localVideoRef, audioContainerRef, setVideoSubscriptions);
+    init(
+      roomId,
+      localVideoRef,
+      audioContainerRef,
+      videoToggleRef,
+      setVideoSubscriptions,
+      (value: boolean) => setIsVideoEnabled(value)
+    );
   }, []);
 
   return (
@@ -28,9 +37,12 @@ const Room = () => {
         <button id="share" onClick={() => onShare(roomId)}>
           共有
         </button>
+        <button ref={videoToggleRef}>
+          {isVideoEnabled ? "画面オフ" : "画面オン"}
+        </button>
       </div>
       <VideoContent>
-        <StyledVideo ref={localVideoRef}></StyledVideo>
+        <LocalVideo ref={localVideoRef} />
         {videoSubscriptions.map((subscription) => (
           <Video key={subscription.id} subscription={subscription} />
         ))}
