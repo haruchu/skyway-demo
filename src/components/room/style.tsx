@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { videoStyle } from "./videoStyle";
 export const Wrapper = styled.div`
   position: relative;
   display: flex;
@@ -6,24 +7,32 @@ export const Wrapper = styled.div`
   gap: 20px;
   align-items: center;
   height: 100vh;
+  padding: 0 30px;
 `;
 
-export const VideoContent = styled.div`
-  display: flex;
+export const VideoContent = styled.div<{ memberCount: number }>`
+  width: 50%;
+  display: grid;
   flex-wrap: wrap;
-  align-items: stretch;
   justify-content: center;
+  align-items: center;
   gap: 10px;
+  ${({ memberCount }) => `${videoStyle(memberCount)}`}
 `;
 
-export const LocalVideo = styled.video`
-  width: 20%;
+export const LocalVideo = styled.video<{ isVideoEnabled: boolean }>`
+  width: 100%;
+  height: ${({ isVideoEnabled }) => (isVideoEnabled ? "100%" : "75%")};
   object-fit: cover;
   border-radius: 12px;
   background-color: black;
+  overflow: hidden;
 `;
 
-export const RemoteVideo = styled.video<{ isLarge?: boolean }>`
+export const RemoteVideo = styled.video<{
+  isLarge?: boolean;
+}>`
+  width: 100%;
   cursor: pointer;
   object-fit: cover;
   border-radius: 12px;
@@ -42,6 +51,5 @@ export const RemoteVideo = styled.video<{ isLarge?: boolean }>`
 `
       : `
       z-index: 1;
-      width: 20%;
 `}
 `;
