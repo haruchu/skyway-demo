@@ -33,11 +33,11 @@ export const init = async (
     localVideoRef.current.muted = true;
     localVideoRef.current.playsInline = true;
     video.attach(localVideoRef.current);
-    await localVideoRef.current.play();
+    localVideoRef.current.play();
   }
 
-  await me.publish(audio);
-  await me.publish(video);
+  me.publish(audio);
+  me.publish(video);
 
   me.onPublicationSubscribed.add((e) => {
     if (e.stream.contentType === "audio") {
@@ -60,16 +60,16 @@ export const init = async (
     );
   });
 
-  const subscribe = async (publication: RoomPublication) => {
+  const subscribe = (publication: RoomPublication) => {
     if (publication.publisher.id !== me.id) {
-      await me.subscribe(publication);
+      me.subscribe(publication);
     } else {
-      const videoToggleButton = async () => {
+      const videoToggleButton = () => {
         if (publication.state === "enabled") {
-          await publication.disable();
+          publication.disable();
           onToggleVideo(false);
         } else {
-          await publication.enable();
+          publication.enable();
           onToggleVideo(true);
         }
       };
@@ -79,8 +79,8 @@ export const init = async (
         );
     }
   };
-  room.onStreamPublished.add(async (e) => {
-    await subscribe(e.publication);
+  room.onStreamPublished.add((e) => {
+    subscribe(e.publication);
   });
 
   const leaveButton = document.getElementById("leave") as HTMLButtonElement;
@@ -105,7 +105,6 @@ export const onShare = (roomId: string) => {
       const [displayTrack] = displayStream.getVideoTracks();
       const stream = new LocalVideoStream(displayTrack);
       await share.publish(stream);
-      await new Promise((resolve) => setTimeout(resolve, 500));
       displayStream.getTracks()[0].addEventListener("ended", async () => {
         share.leave();
       });
