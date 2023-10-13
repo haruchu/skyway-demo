@@ -101,13 +101,20 @@ export const onShare = (roomId: string) => {
     const share = await room.join();
     const shareButton = document.getElementById("share") as HTMLButtonElement;
     shareButton.onclick = async () => {
-      const displayStream = await navigator.mediaDevices.getDisplayMedia();
-      const [displayTrack] = displayStream.getVideoTracks();
-      const stream = new LocalVideoStream(displayTrack);
-      await share.publish(stream);
-      displayStream.getTracks()[0].addEventListener("ended", async () => {
-        share.leave();
-      });
+      try {
+        const displayStream = await navigator.mediaDevices.getDisplayMedia();
+        const [displayTrack] = displayStream.getVideoTracks();
+        const stream = new LocalVideoStream(displayTrack);
+        await share.publish(stream);
+        displayStream.getTracks()[0].addEventListener("canceled", async () => {
+          return;
+        });
+        displayStream.getTracks()[0].addEventListener("ended", async () => {
+          share.leave();
+        });
+      } catch (err) {
+        console.error(`Error: ${err}`);
+      }
     };
   })();
 };
