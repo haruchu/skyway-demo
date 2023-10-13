@@ -106,9 +106,6 @@ export const onShare = (roomId: string) => {
         const [displayTrack] = displayStream.getVideoTracks();
         const stream = new LocalVideoStream(displayTrack);
         await share.publish(stream);
-        displayStream.getTracks()[0].addEventListener("canceled", async () => {
-          return;
-        });
         displayStream.getTracks()[0].addEventListener("ended", async () => {
           share.leave();
         });
