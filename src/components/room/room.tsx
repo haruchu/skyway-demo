@@ -41,8 +41,8 @@ const Room = () => {
           {isVideoEnabled ? "画面オフ" : "画面オン"}
         </button>
       </div>
-      <VideoContent>
-        <LocalVideo ref={localVideoRef} />
+      <VideoContent memberCount={videoSubscriptions.length + 1}>
+        <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoEnabled} />
         {videoSubscriptions.map((subscription) => (
           <Video key={subscription.id} subscription={subscription} />
         ))}
@@ -52,9 +52,9 @@ const Room = () => {
   );
 };
 
-const Video: FC<{ subscription: RoomSubscription<RemoteVideoStream> }> = ({
-  subscription,
-}) => {
+const Video: FC<{
+  subscription: RoomSubscription<RemoteVideoStream>;
+}> = ({ subscription }) => {
   const ref = useRef<HTMLVideoElement>(null);
   const [isLarge, setLarge] = useState(false);
 
