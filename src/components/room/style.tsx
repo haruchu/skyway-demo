@@ -11,22 +11,33 @@ export const Wrapper = styled.div`
 `;
 
 export const VideoContent = styled.div<{ memberCount: number }>`
-  width: 50%;
+  @media screen and (min-width: 900px) {
+    width: 50%;
+  }
   display: grid;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
   gap: 10px;
   ${({ memberCount }) => `${videoStyle(memberCount)}`}
 `;
 
-export const LocalVideo = styled.video<{ isVideoEnabled: boolean }>`
-  width: 100%;
-  height: ${({ isVideoEnabled }) => (isVideoEnabled ? "100%" : "75%")};
+export const LocalVideo = styled.video<{
+  isVideoEnabled: boolean;
+}>`
+  width: 130px;
+  height: 100px;
+
+  @media screen and (min-width: 600px) {
+    width: 300px;
+    height: 200px;
+  }
+
   object-fit: cover;
   border-radius: 12px;
   background-color: black;
   overflow: hidden;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
 `;
 
 export const RemoteVideo = styled.video<{
