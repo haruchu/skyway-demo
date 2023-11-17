@@ -14,10 +14,12 @@ export const init = async (
   localVideoRef: React.RefObject<HTMLVideoElement>,
   audioContainerRef: React.RefObject<HTMLDivElement>,
   videoToggleRef: React.RefObject<HTMLButtonElement>,
+  audioToggleRef: React.RefObject<HTMLButtonElement>,
   setVideoSubscriptions: React.Dispatch<
     React.SetStateAction<RoomSubscription<RemoteVideoStream>[]>
   >,
-  onToggleVideo: (value: boolean) => void
+  onToggleVideo: (value: boolean) => void,
+  onToggleAudio: (value: boolean) => void
 ) => {
   const context = await SkyWayContext.Create(tokenString, contextOptions);
   const room = await SkyWayRoom.FindOrCreate(context, {
@@ -64,19 +66,33 @@ export const init = async (
     if (publication.publisher.id !== me.id) {
       me.subscribe(publication);
     } else {
-      const videoToggleButton = () => {
-        if (publication.state === "enabled") {
-          publication.disable();
-          onToggleVideo(false);
-        } else {
-          publication.enable();
+      let isVideoEnabled = false;
+      videoToggleRef.current!.onclick = () => {
+        if (isVideoEnabled) {
+          isVideoEnabled = false;
           onToggleVideo(true);
+          videoToggleRef.current!.value = "video-off";
+        } else {
+          isVideoEnabled = true;
+          onToggleVideo(false);
+          videoToggleRef.current!.value = "video-on";
         }
+        video.setEnabled(isVideoEnabled);
       };
-      videoToggleRef &&
-        videoToggleRef.current?.addEventListener("click", () =>
-          videoToggleButton()
-        );
+
+      let isMikeEnabled = false;
+      audioToggleRef.current!.onclick = () => {
+        if (isMikeEnabled) {
+          isMikeEnabled = false;
+          onToggleAudio(true);
+          audioToggleRef.current!.value = "mike-off";
+        } else {
+          isMikeEnabled = true;
+          onToggleAudio(false);
+          audioToggleRef.current!.value = "mike-on";
+        }
+        audio.setEnabled(isMikeEnabled);
+      };
     }
   };
   room.onStreamPublished.add((e) => {

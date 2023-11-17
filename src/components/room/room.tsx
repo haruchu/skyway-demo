@@ -9,21 +9,26 @@ const Room = () => {
   const audioContainerRef = useRef<HTMLDivElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const videoToggleRef = useRef<HTMLButtonElement>(null);
+  const audioToggleRef = useRef<HTMLButtonElement>(null);
   const [videoSubscriptions, setVideoSubscriptions] = useState<
     RoomSubscription<RemoteVideoStream>[]
   >([]);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
 
   useEffect(() => {
     init(
+      // TODO：オブジェクトにしたい
       roomId,
       localVideoRef,
       audioContainerRef,
       videoToggleRef,
+      audioToggleRef,
       setVideoSubscriptions,
-      (value: boolean) => setIsVideoEnabled(value)
+      (value: boolean) => setIsVideoEnabled(value),
+      (value: boolean) => setIsAudioEnabled(value)
     );
   }, []);
 
@@ -37,8 +42,11 @@ const Room = () => {
         <button id="share" onClick={() => onShare(roomId)}>
           共有
         </button>
-        <button ref={videoToggleRef}>
+        <button ref={videoToggleRef} value={"video-on"}>
           {isVideoEnabled ? "画面オフ" : "画面オン"}
+        </button>
+        <button ref={audioToggleRef} value={"mike-on"}>
+          {isAudioEnabled ? "マイクオフ" : "マイクオン"}
         </button>
       </div>
       <VideoContent memberCount={videoSubscriptions.length + 1}>
