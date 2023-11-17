@@ -52,7 +52,12 @@ const Room = () => {
       <VideoContent memberCount={videoSubscriptions.length + 1}>
         <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoDisabled} />
         {videoSubscriptions.map((subscription) => (
-          <Video key={subscription.id} subscription={subscription} />
+          <Video
+            key={subscription.id}
+            subscription={subscription}
+            // この下工夫する、現在のビデオ状態取得したい
+            disabled={subscription.publication.~~~~}
+          />
         ))}
       </VideoContent>
       <div ref={audioContainerRef} />
@@ -62,23 +67,29 @@ const Room = () => {
 
 const Video: FC<{
   subscription: RoomSubscription<RemoteVideoStream>;
-}> = ({ subscription }) => {
+  disabled: boolean;
+}> = ({ subscription, disabled }) => {
   const ref = useRef<HTMLVideoElement>(null);
   const [isLarge, setLarge] = useState(false);
 
   useEffect(() => {
-    ref.current!.srcObject = new MediaStream([subscription.stream!.track]);
-  }, [ref.current]);
+    ref.current!.srcObject = disabled
+      ? null
+      : new MediaStream([subscription.stream!.track]);
+  }, [ref.current, disabled]);
 
   return (
-    <RemoteVideo
-      muted
-      autoPlay
-      playsInline
-      ref={ref}
-      isLarge={isLarge}
-      onClick={() => setLarge(!isLarge)}
-    />
+    <>
+      {/* disabledによって表示切替 */}
+      <RemoteVideo
+        muted={disabled}
+        autoPlay
+        playsInline
+        ref={ref}
+        isLarge={isLarge}
+        onClick={() => setLarge(!isLarge)}
+      />
+    </>
   );
 };
 

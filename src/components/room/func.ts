@@ -68,26 +68,28 @@ export const init = async (
     } else {
       videoToggleRef.current!.onclick = () => {
         if (video.isEnabled) {
+          // ビデオオフの時
           setIsVideoDisabled(false);
           video.setEnabled(false);
         } else {
+          // ビデオオンの時
           setIsVideoDisabled(true);
           video.setEnabled(true);
         }
         // trueならビデオオフ
-        me.publish(video);
       };
 
       audioToggleRef.current!.onclick = () => {
         if (audio.isEnabled) {
+          // マイクオフの時
           setIsAudioDisabled(false);
           audio.setEnabled(false);
         } else {
+          // マイクオンの時
           setIsAudioDisabled(true);
           audio.setEnabled(true);
         }
         // trueならミュート
-        me.publish(audio);
       };
     }
   };
