@@ -77,6 +77,7 @@ export const init = async (
         }
         // trueならビデオオフ
         video.setEnabled(isVideoDisabled);
+        me.publish(video);
       };
 
       let isAudioDisabled = false;
@@ -90,6 +91,7 @@ export const init = async (
         }
         // trueならミュート
         audio.setEnabled(isAudioDisabled);
+        me.publish(audio);
       };
     }
   };
