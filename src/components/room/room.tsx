@@ -13,8 +13,8 @@ const Room = () => {
   const [videoSubscriptions, setVideoSubscriptions] = useState<
     RoomSubscription<RemoteVideoStream>[]
   >([]);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoDisabled, setIsVideoDisabled] = useState(true);
+  const [isAudioDisabled, setIsAudioDisabled] = useState(true);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
 
@@ -27,8 +27,8 @@ const Room = () => {
       videoToggleRef,
       audioToggleRef,
       setVideoSubscriptions,
-      (value: boolean) => setIsVideoEnabled(value),
-      (value: boolean) => setIsAudioEnabled(value)
+      (value: boolean) => setIsVideoDisabled(value),
+      (value: boolean) => setIsAudioDisabled(value)
     );
   }, []);
 
@@ -42,15 +42,15 @@ const Room = () => {
         <button id="share" onClick={() => onShare(roomId)}>
           共有
         </button>
-        <button ref={videoToggleRef} value={"video-on"}>
-          {isVideoEnabled ? "画面オフ" : "画面オン"}
+        <button ref={videoToggleRef}>
+          {isVideoDisabled ? "画面オフ" : "画面オン"}
         </button>
-        <button ref={audioToggleRef} value={"mike-on"}>
-          {isAudioEnabled ? "マイクオフ" : "マイクオン"}
+        <button ref={audioToggleRef}>
+          {isAudioDisabled ? "マイクオフ" : "マイクオン"}
         </button>
       </div>
       <VideoContent memberCount={videoSubscriptions.length + 1}>
-        <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoEnabled} />
+        <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoDisabled} />
         {videoSubscriptions.map((subscription) => (
           <Video key={subscription.id} subscription={subscription} />
         ))}

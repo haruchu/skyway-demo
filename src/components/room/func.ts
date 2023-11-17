@@ -18,8 +18,8 @@ export const init = async (
   setVideoSubscriptions: React.Dispatch<
     React.SetStateAction<RoomSubscription<RemoteVideoStream>[]>
   >,
-  onToggleVideo: (value: boolean) => void,
-  onToggleAudio: (value: boolean) => void
+  setIsVideoDisabled: (value: boolean) => void,
+  setIsAudioDisabled: (value: boolean) => void
 ) => {
   const context = await SkyWayContext.Create(tokenString, contextOptions);
   const room = await SkyWayRoom.FindOrCreate(context, {
@@ -66,32 +66,30 @@ export const init = async (
     if (publication.publisher.id !== me.id) {
       me.subscribe(publication);
     } else {
-      let isVideoEnabled = false;
+      let isVideoDisabled = false;
       videoToggleRef.current!.onclick = () => {
-        if (isVideoEnabled) {
-          isVideoEnabled = false;
-          onToggleVideo(true);
-          videoToggleRef.current!.value = "video-off";
+        if (isVideoDisabled) {
+          isVideoDisabled = false;
+          setIsVideoDisabled(isVideoDisabled);
         } else {
-          isVideoEnabled = true;
-          onToggleVideo(false);
-          videoToggleRef.current!.value = "video-on";
+          isVideoDisabled = true;
+          setIsVideoDisabled(isVideoDisabled);
         }
-        video.setEnabled(isVideoEnabled);
+        // trueならビデオオフ
+        video.setEnabled(isVideoDisabled);
       };
 
-      let isMikeEnabled = false;
+      let isAudioDisabled = false;
       audioToggleRef.current!.onclick = () => {
-        if (isMikeEnabled) {
-          isMikeEnabled = false;
-          onToggleAudio(true);
-          audioToggleRef.current!.value = "mike-off";
+        if (isAudioDisabled) {
+          isAudioDisabled = false;
+          setIsAudioDisabled(isAudioDisabled);
         } else {
-          isMikeEnabled = true;
-          onToggleAudio(false);
-          audioToggleRef.current!.value = "mike-on";
+          isAudioDisabled = true;
+          setIsAudioDisabled(isAudioDisabled);
         }
-        audio.setEnabled(isMikeEnabled);
+        // trueならミュート
+        audio.setEnabled(isAudioDisabled);
       };
     }
   };
