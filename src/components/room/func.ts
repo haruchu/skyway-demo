@@ -66,31 +66,27 @@ export const init = async (
     if (publication.publisher.id !== me.id) {
       me.subscribe(publication);
     } else {
-      let isVideoDisabled = false;
       videoToggleRef.current!.onclick = () => {
-        if (isVideoDisabled) {
-          isVideoDisabled = false;
-          setIsVideoDisabled(isVideoDisabled);
+        if (video.isEnabled) {
+          setIsVideoDisabled(false);
+          video.setEnabled(false);
         } else {
-          isVideoDisabled = true;
-          setIsVideoDisabled(isVideoDisabled);
+          setIsVideoDisabled(true);
+          video.setEnabled(true);
         }
         // trueならビデオオフ
-        video.setEnabled(isVideoDisabled);
         me.publish(video);
       };
 
-      let isAudioDisabled = false;
       audioToggleRef.current!.onclick = () => {
-        if (isAudioDisabled) {
-          isAudioDisabled = false;
-          setIsAudioDisabled(isAudioDisabled);
+        if (audio.isEnabled) {
+          setIsAudioDisabled(false);
+          audio.setEnabled(false);
         } else {
-          isAudioDisabled = true;
-          setIsAudioDisabled(isAudioDisabled);
+          setIsAudioDisabled(true);
+          audio.setEnabled(true);
         }
         // trueならミュート
-        audio.setEnabled(isAudioDisabled);
         me.publish(audio);
       };
     }
