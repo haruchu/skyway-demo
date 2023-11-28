@@ -56,7 +56,7 @@ const Room = () => {
             key={subscription.id}
             subscription={subscription}
             // この下工夫する、現在のビデオ状態取得したい
-            disabled={subscription.publication.~~~~}
+            disabled={subscription.stream?.track === undefined}
           />
         ))}
       </VideoContent>
@@ -76,13 +76,12 @@ const Video: FC<{
     ref.current!.srcObject = disabled
       ? null
       : new MediaStream([subscription.stream!.track]);
-  }, [ref.current, disabled]);
+  }, [ref.current, subscription.stream, disabled]);
 
   return (
     <>
       {/* disabledによって表示切替 */}
       <RemoteVideo
-        muted={disabled}
         autoPlay
         playsInline
         ref={ref}
