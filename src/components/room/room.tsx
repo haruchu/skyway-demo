@@ -9,21 +9,26 @@ const Room = () => {
   const audioContainerRef = useRef<HTMLDivElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const videoToggleRef = useRef<HTMLButtonElement>(null);
+  const audioToggleRef = useRef<HTMLButtonElement>(null);
   const [videoSubscriptions, setVideoSubscriptions] = useState<
     RoomSubscription<RemoteVideoStream>[]
   >([]);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isVideoDisabled, setIsVideoDisabled] = useState(true);
+  const [isAudioDisabled, setIsAudioDisabled] = useState(true);
   const [searchParams] = useSearchParams();
   const [roomId, setRoomId] = useState(searchParams.get("roomId") ?? "");
 
   useEffect(() => {
     init(
+      // TODO：オブジェクトにしたい
       roomId,
       localVideoRef,
       audioContainerRef,
       videoToggleRef,
+      audioToggleRef,
       setVideoSubscriptions,
-      (value: boolean) => setIsVideoEnabled(value)
+      (value: boolean) => setIsVideoDisabled(value),
+      (value: boolean) => setIsAudioDisabled(value)
     );
   }, []);
 
@@ -38,11 +43,14 @@ const Room = () => {
           共有
         </button>
         <button ref={videoToggleRef}>
-          {isVideoEnabled ? "画面オフ" : "画面オン"}
+          {isVideoDisabled ? "画面オフ" : "画面オン"}
+        </button>
+        <button ref={audioToggleRef}>
+          {isAudioDisabled ? "マイクオフ" : "マイクオン"}
         </button>
       </div>
       <VideoContent memberCount={videoSubscriptions.length + 1}>
-        <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoEnabled} />
+        <LocalVideo ref={localVideoRef} isVideoEnabled={isVideoDisabled} />
         {videoSubscriptions.map((subscription) => (
           <Video key={subscription.id} subscription={subscription} />
         ))}
@@ -60,17 +68,19 @@ const Video: FC<{
 
   useEffect(() => {
     ref.current!.srcObject = new MediaStream([subscription.stream!.track]);
-  }, [ref.current]);
+  }, [ref.current, subscription.stream]);
 
   return (
-    <RemoteVideo
-      muted
-      autoPlay
-      playsInline
-      ref={ref}
-      isLarge={isLarge}
-      onClick={() => setLarge(!isLarge)}
-    />
+    <>
+      {/* disabledによって表示切替 */}
+      <RemoteVideo
+        autoPlay
+        playsInline
+        ref={ref}
+        isLarge={isLarge}
+        onClick={() => setLarge(!isLarge)}
+      />
+    </>
   );
 };
 

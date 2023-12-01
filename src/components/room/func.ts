@@ -14,10 +14,12 @@ export const init = async (
   localVideoRef: React.RefObject<HTMLVideoElement>,
   audioContainerRef: React.RefObject<HTMLDivElement>,
   videoToggleRef: React.RefObject<HTMLButtonElement>,
+  audioToggleRef: React.RefObject<HTMLButtonElement>,
   setVideoSubscriptions: React.Dispatch<
     React.SetStateAction<RoomSubscription<RemoteVideoStream>[]>
   >,
-  onToggleVideo: (value: boolean) => void
+  setIsVideoDisabled: (value: boolean) => void,
+  setIsAudioDisabled: (value: boolean) => void
 ) => {
   const context = await SkyWayContext.Create(tokenString, contextOptions);
   const room = await SkyWayRoom.FindOrCreate(context, {
@@ -64,19 +66,31 @@ export const init = async (
     if (publication.publisher.id !== me.id) {
       me.subscribe(publication);
     } else {
-      const videoToggleButton = () => {
-        if (publication.state === "enabled") {
-          publication.disable();
-          onToggleVideo(false);
+      videoToggleRef.current!.onclick = () => {
+        if (video.isEnabled) {
+          // ビデオオフの時
+          setIsVideoDisabled(false);
+          video.setEnabled(false);
         } else {
-          publication.enable();
-          onToggleVideo(true);
+          // ビデオオンの時
+          setIsVideoDisabled(true);
+          video.setEnabled(true);
         }
+        // trueならビデオオフ
       };
-      videoToggleRef &&
-        videoToggleRef.current?.addEventListener("click", () =>
-          videoToggleButton()
-        );
+
+      audioToggleRef.current!.onclick = () => {
+        if (audio.isEnabled) {
+          // マイクオフの時
+          setIsAudioDisabled(false);
+          audio.setEnabled(false);
+        } else {
+          // マイクオンの時
+          setIsAudioDisabled(true);
+          audio.setEnabled(true);
+        }
+        // trueならミュート
+      };
     }
   };
   room.onStreamPublished.add((e) => {
